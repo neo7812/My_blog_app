@@ -15,8 +15,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.get("/blogs/new", (req, res) => {
-  res.render("blogForm", { blog: null });
+router.get('/blogs/new', (req, res) => {
+  res.render('blogform', { blog: null });
 });
 
 router.post("/blogs", upload.single("blogImage"), async (req, res) => {
@@ -54,7 +54,7 @@ router.get("/blogs/:id/edit", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-    res.render("blogForm", { blog });
+    res.render('blogform', { blog });
   } catch (err) {
     console.log("Error fetching blog:", err);
     res.send("Something went wrong!");
@@ -122,7 +122,7 @@ router.get("/blogs/:id", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-    res.render("blogDetail", { blog, user: req.user });
+    res.render('blogdetail', { blog, user: req.user });
   } catch (err) {
     console.log("Error fetching blog:", err);
     res.send("Something went wrong!");

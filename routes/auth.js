@@ -16,8 +16,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.get("/signup", (req, res) => {
-  res.render("signup");
+router.get('/signup', (req, res) => {
+  res.render('signup');
 });
 
 router.post("/signup", upload.single("profileImage"), async (req, res) => {
@@ -60,8 +60,8 @@ router.post("/signup", upload.single("profileImage"), async (req, res) => {
   }
 });
 
-router.get("/login", (req, res) => {
-  res.render("login");
+router.get('/login', (req, res) => {
+  res.render('login');
 });
 
 router.post("/login", async (req, res) => {

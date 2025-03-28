@@ -43,9 +43,9 @@ const authMiddleware = async (req, res, next) => {
 app.use("/", authRoutes);
 app.use("/", authMiddleware, blogRoutes);
 
-app.get("/dashboard", authMiddleware, async (req, res) => {
+app.get('/dashboard', authMiddleware, async (req, res) => {
   const blogs = await Blog.find({ userId: req.user._id });
-  res.render("dashboard", { user: req.user, blogs });
+  res.render('dashboard', { user: req.user, blogs });
 });
 
 app.get("/logout", (req, res) => {
