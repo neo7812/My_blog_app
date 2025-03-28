@@ -21,11 +21,11 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage: storage });
 
-router.get("/blogs/new", (req, res) => {
-  res.render("blogform", { blog: null });
+router.get('/blogs/new', (req, res) => {
+  res.render('blogform', { blog: null });
 });
 
-router.post("/blogs", upload.single("blogImage"), async (req, res) => {
+router.post('/blogs', upload.single("blogImage"), async (req, res) => {
   const { title, description } = req.body;
   const blogImage = req.file ? req.file.path : null; 
 
@@ -44,14 +44,14 @@ router.post("/blogs", upload.single("blogImage"), async (req, res) => {
       userId: req.user._id,
     });
     await blog.save();
-    res.redirect("/dashboard");
+    res.redirect('/dashboard');
   } catch (err) {
     console.log("Error saving blog:", err);
     res.send("Failed to save blog!");
   }
 });
 
-router.get("/blogs/:id/edit", async (req, res) => {
+router.get('/blogs/:id/edit', async (req, res) => {
   try {
     const blog = await Blog.findOne({
       _id: req.params.id,
@@ -60,14 +60,14 @@ router.get("/blogs/:id/edit", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-    res.render("blogform", { blog });
+    res.render('blogform', { blog });
   } catch (err) {
     console.log("Error fetching blog:", err);
     res.send("Something went wrong!");
   }
 });
 
-router.post("/blogs/:id", upload.single("blogImage"), async (req, res) => {
+router.post('/blogs/:id', upload.single("blogImage"), async (req, res) => {
   const { title, description } = req.body;
   const blogImage = req.file ? req.file.path : null;
 
@@ -90,14 +90,14 @@ router.post("/blogs/:id", upload.single("blogImage"), async (req, res) => {
     blog.description = description;
     if (blogImage) blog.image = blogImage;
     await blog.save();
-    res.redirect("/dashboard");
+    res.redirect('/dashboard');
   } catch (err) {
     console.log("Error updating blog:", err);
     res.send("Failed to update blog!");
   }
 });
 
-router.get("/blogs/:id/delete", async (req, res) => {
+router.get('/blogs/:id/delete', async (req, res) => {
   try {
     const blog = await Blog.findOne({
       _id: req.params.id,
@@ -107,14 +107,14 @@ router.get("/blogs/:id/delete", async (req, res) => {
       return res.send("Blog not found!");
     }
     await Blog.deleteOne({ _id: req.params.id });
-    res.redirect("/dashboard");
+    res.redirect('/dashboard');
   } catch (err) {
     console.log("Error deleting blog:", err);
     res.send("Failed to delete blog!");
   }
 });
 
-router.get("/blogs/:id", async (req, res) => {
+router.get('/blogs/:id', async (req, res) => {
   try {
     const blog = await Blog.findOne({
       _id: req.params.id,
@@ -125,7 +125,7 @@ router.get("/blogs/:id", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-    res.render("blogdetail", { blog, user: req.user });
+    res.render('blogdetail', { blog, user: req.user });
   } catch (err) {
     console.log("Error fetching blog:", err);
     res.send("Something went wrong!");
@@ -133,7 +133,7 @@ router.get("/blogs/:id", async (req, res) => {
 });
 
 
-router.post("/blogs/:id/comments", async (req, res) => {
+router.post('/blogs/:id/comments', async (req, res) => {
   const { commentText } = req.body;
 
   if (!commentText || commentText.length < 5) {
@@ -160,7 +160,7 @@ router.post("/blogs/:id/comments", async (req, res) => {
   }
 });
 
-router.post("/blogs/:blogId/comments/:commentId/reply", async (req, res) => {
+router.post('/blogs/:blogId/comments/:commentId/reply', async (req, res) => {
   const { replyText } = req.body;
 
   if (!replyText || replyText.length < 5) {
