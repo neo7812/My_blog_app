@@ -3,26 +3,32 @@ const router = express.Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-const path = require("path");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "profile_images",
+    allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
 const upload = multer({ storage: storage });
 
-router.get('/signup', (req, res) => {
-  res.render('signup');
+router.get("/signup", (req, res) => {
+  res.render("signup");
 });
 
 router.post("/signup", upload.single("profileImage"), async (req, res) => {
   const { username, email, password } = req.body;
-  const profileImage = req.file ? `/uploads/${req.file.filename}` : null;
+  const profileImage = req.file ? req.file.path : null; 
 
   if (!username || username.length < 3) {
     return res.send("Username must be at least 3 characters!");
@@ -60,8 +66,8 @@ router.post("/signup", upload.single("profileImage"), async (req, res) => {
   }
 });
 
-router.get('/login', (req, res) => {
-  res.render('login');
+router.get("/login", (req, res) => {
+  res.render("login");
 });
 
 router.post("/login", async (req, res) => {

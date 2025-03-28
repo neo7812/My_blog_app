@@ -1,27 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const Blog = require("../models/blog");
-const multer = require("multer");
-const path = require("path");
 const User = require("../models/user");
+const cloudinary = require("cloudinary").v2;
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, "blog_" + Date.now() + path.extname(file.originalname));
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "blog_images",
+    allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
 const upload = multer({ storage: storage });
 
-router.get('/blogs/new', (req, res) => {
-  res.render('blogform', { blog: null });
+router.get("/blogs/new", (req, res) => {
+  res.render("blogform", { blog: null });
 });
 
 router.post("/blogs", upload.single("blogImage"), async (req, res) => {
   const { title, description } = req.body;
-  const blogImage = req.file ? `/uploads/${req.file.filename}` : null;
+  const blogImage = req.file ? req.file.path : null; 
 
   if (!title || title.length < 3) {
     return res.send("Title must be at least 3 characters!");
@@ -54,7 +60,7 @@ router.get("/blogs/:id/edit", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-    res.render('blogform', { blog });
+    res.render("blogform", { blog });
   } catch (err) {
     console.log("Error fetching blog:", err);
     res.send("Something went wrong!");
@@ -63,7 +69,7 @@ router.get("/blogs/:id/edit", async (req, res) => {
 
 router.post("/blogs/:id", upload.single("blogImage"), async (req, res) => {
   const { title, description } = req.body;
-  const blogImage = req.file ? `/uploads/${req.file.filename}` : null;
+  const blogImage = req.file ? req.file.path : null;
 
   if (!title || title.length < 3) {
     return res.send("Title must be at least 3 characters!");
@@ -80,12 +86,9 @@ router.post("/blogs/:id", upload.single("blogImage"), async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-
     blog.title = title;
     blog.description = description;
-    if (blogImage) {
-      blog.image = blogImage;
-    }
+    if (blogImage) blog.image = blogImage;
     await blog.save();
     res.redirect("/dashboard");
   } catch (err) {
@@ -122,12 +125,13 @@ router.get("/blogs/:id", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-    res.render('blogdetail', { blog, user: req.user });
+    res.render("blogdetail", { blog, user: req.user });
   } catch (err) {
     console.log("Error fetching blog:", err);
     res.send("Something went wrong!");
   }
 });
+
 
 router.post("/blogs/:id/comments", async (req, res) => {
   const { commentText } = req.body;
@@ -144,7 +148,6 @@ router.post("/blogs/:id/comments", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-
     blog.comments.push({
       text: commentText,
       userId: req.user._id,
@@ -172,12 +175,10 @@ router.post("/blogs/:blogId/comments/:commentId/reply", async (req, res) => {
     if (!blog) {
       return res.send("Blog not found!");
     }
-
     const comment = blog.comments.id(req.params.commentId);
     if (!comment) {
       return res.send("Comment not found!");
     }
-
     comment.replies.push({
       text: replyText,
       userId: req.user._id,
