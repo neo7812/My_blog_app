@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= blog.title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/script.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="blog-content">
+        <h2><%= blog.title %></h2>
+        <% if (blog.image) { %>
+        <img src="<%= blog.image %>" class="blog-img" />
+        <% } %>
+        <p><%= blog.description %></p>
+      </div>
+
+      <div class="comment-section">
+        <h3>Comments</h3>
+        <% blog.comments.forEach(comment => { %>
+        <div class="comment">
+          <p>
+            <strong
+              ><%= comment.userId.username %> (<%-
+              comment.createdAt.toLocaleDateString() %>):</strong
+            >
+            <%= comment.text %>
+          </p>
+          <form
+            action="/blogs/<%= blog._id %>/comments/<%= comment._id %>/reply"
+            method="POST"
+          >
+            <textarea
+              name="replyText"
+              rows="2"
+              placeholder="Reply to this comment"
+              required
+            ></textarea>
+            <button type="submit">Reply</button>
+          </form>
+          <% comment.replies.forEach(reply => { %>
+          <div class="reply">
+            <p>
+              <em
+                ><%= reply.userId.username %> (<%-
+                reply.createdAt.toLocaleDateString() %>):</em
+              >
+              <%= reply.text %>
+            </p>
+          </div>
+          <% }) %>
+        </div>
+        <% }) %>
+
+        <h4>Add a Comment</h4>
+        <form action="/blogs/<%= blog._id %>/comments" method="POST">
+          <textarea
+            name="commentText"
+            rows="3"
+            placeholder="Write your comment here"
+            required
+          ></textarea>
+          <button type="submit">Post Comment</button>
+        </form>
+      </div>
+
+      <p><a href="/dashboard">Back to Dashboard</a></p>
+    </div>
+  </body>
+</html>

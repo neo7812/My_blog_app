@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/script.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="dashboard-header">
+        <h2>Welcome, <%= user.username %>!</h2>
+        <div>
+          <% if (user.profileImage) { %>
+          <img
+            src="<%= user.profileImage %>"
+            alt="Profile"
+            class="profile-img"
+          />
+          <% } else { %>
+          <p>No profile image</p>
+          <% } %>
+        </div>
+      </div>
+      <a href="/blogs/new">Add New Blog</a>
+      <h3>Your Blogs</h3>
+      <table>
+        <tr>
+          <th>Title</th>
+          <th>Image</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+        <% blogs.forEach(blog => { %>
+        <tr>
+          <td><%= blog.title %></td>
+          <td>
+            <% if (blog.image) { %>
+            <img src="<%= blog.image %>" width="50" class="blog-img" />
+            <% } else { %> No image <% } %>
+          </td>
+          <td><%= blog.description.substring(0, 50) %>...</td>
+          <td>
+            <a href="/blogs/<%= blog._id %>">View</a> |
+            <a href="/blogs/<%= blog._id %>/edit">Edit</a> |
+            <a
+              href="/blogs/<%= blog._id %>/delete"
+              onclick="return confirm('Are you sure?');"
+              >Delete</a
+            >
+          </td>
+        </tr>
+        <% }) %>
+      </table>
+      <p><a href="/logout">Logout</a></p>
+    </div>
+  </body>
+</html>

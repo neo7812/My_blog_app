@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/script.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Sign Up</h2>
+      <form action="/signup" method="POST" enctype="multipart/form-data">
+        <label>Username:</label>
+        <input type="text" name="username" required />
+        <label>Email:</label>
+        <input type="email" name="email" required />
+        <label>Password:</label>
+        <input type="password" name="password" required />
+        <label>Profile Image:</label>
+        <input type="file" name="profileImage" accept="image/*" />
+        <button type="submit">Sign Up</button>
+      </form>
+      <p>Already have an account? <a href="/login">Login here</a></p>
+    </div>
+  </body>
+</html>
